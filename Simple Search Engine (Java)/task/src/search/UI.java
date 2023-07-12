@@ -4,9 +4,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-/**
- * Handles the UI.
- */
 class UI {
 
     private static final Scanner scanner = new Scanner(System.in);

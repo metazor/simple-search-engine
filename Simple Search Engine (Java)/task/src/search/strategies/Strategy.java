@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * The strategy method.
- */
 public interface Strategy {
 
     /**
