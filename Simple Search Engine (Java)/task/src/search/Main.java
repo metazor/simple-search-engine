@@ -2,11 +2,12 @@ package search;
 
 public class Main {
 
-    private static final UI ui = new UI();
+    private static final Engine engine = new Engine();
 
     public static void main(String[] args) {
-        Engine engine = new Engine(ui, args[1]);
-        engine.readFile();
-        engine.startMenu();
+        if (engine.readFile(args[1])) {
+            UI ui = new UI(engine);
+            ui.startMenu();
+        }
     }
 }

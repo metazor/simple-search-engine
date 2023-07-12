@@ -7,51 +7,44 @@ import search.strategies.None;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Creates and runs the search engine.
  */
 class Engine {
 
-    private final UI ui;
-    private final String fileName;
     private final Map<String, ArrayList<Integer>> invertedIndex =
             new HashMap<>();
     private final Map<Integer, String> lines = new HashMap<>();
 
     /**
-     * Class constructor, which initializes the specified fields.
+     * Adds the contents of the specified file to the inverted index and to the
+     * map of lines.
      *
-     * @param ui       the UI used by this
-     * @param fileName the string of the name of the file with the data we want
-     *                 to search in
+     * @param fileName the string of the name of the file to read
+     * @return true, if the file is found
      */
-    Engine(UI ui, String fileName) {
-        this.ui = ui;
-        this.fileName = fileName;
-    }
-
-    /**
-     * Adds the contents of the file to the inverted index and to the map of
-     * lines.
-     */
-    void readFile() {
+    boolean readFile(String fileName) {
         try (Scanner fileScanner = new Scanner(new File(fileName))) {
-            int lineNumber = 0;
-
             while (fileScanner.hasNextLine()) {
                 String currentLine = fileScanner.nextLine();
-                lines.put(lineNumber, currentLine);
-                addLine(currentLine.toLowerCase().split(" "), lineNumber);
-                lineNumber++;
+                lines.put(lines.size(), currentLine);
+                addLine(currentLine.toLowerCase().split(" "), lines.size() - 1);
             }
+
+            return true;
         } catch (FileNotFoundException e) {
-            ui.printFileNotFoundExceptionMessage(e);
+            Logger.getAnonymousLogger().warning("File not found! Exception "
+                    + e.getClass() + " happened.");
+
+            return false;
         }
     }
 
@@ -74,32 +67,12 @@ class Engine {
     }
 
     /**
-     * Prints the menu, reads the user's command and executes it.
+     * Searches the inverted index with the specified search strategy and entry
+     * to find.
+     *
+     * @return the set of line numbers of the found entries
      */
-    void startMenu() {
-        Command input = null;
-
-        while (input != Command.EXIT) {
-            input = ui.readCommand();
-
-            if (input == Command.SEARCH) {
-                search();
-            } else if (input == Command.PRINT_EVERYONE) {
-                ui.printEveryone(lines.values());
-            }
-        }
-
-        ui.printBye();
-    }
-
-    /**
-     * Asks the user to choose a search strategy and the entry to find, then
-     * executes the search and prints the results.
-     */
-    private void search() {
-        ChosenStrategy chosenStrategy = ui.readStrategy();
-        String entryToFind = ui.readEntry();
-        System.out.println();
+    Set<Integer> search(ChosenStrategy chosenStrategy, String entryToFind) {
         EntryFinder entryFinder = new EntryFinder();
 
         switch (chosenStrategy) {
@@ -108,8 +81,10 @@ class Engine {
             case NONE -> entryFinder.setStrategy(new None());
         }
 
-        Set<Integer> foundEntries = entryFinder.getFoundEntries(entryToFind,
-                invertedIndex);
-        ui.printFoundEntries(foundEntries, lines);
+        return entryFinder.getFoundEntries(entryToFind, invertedIndex);
+    }
+
+    public Map<Integer, String> getLines() {
+        return Collections.unmodifiableMap(lines);
     }
 }
