@@ -1,5 +1,6 @@
 package search;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -59,6 +60,11 @@ class UI {
 
     void printBye() {
         System.out.println("Bye!");
+    }
+
+    void printFileNotFoundExceptionMessage(FileNotFoundException e) {
+        System.out.println("File not found!");
+        e.printStackTrace();
     }
 
     /**

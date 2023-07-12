@@ -44,14 +44,14 @@ class Engine {
         try (Scanner fileScanner = new Scanner(new File(fileName))) {
             int lineNumber = 0;
 
-            while (fileScanner.hasNext()) {
+            while (fileScanner.hasNextLine()) {
                 String currentLine = fileScanner.nextLine();
                 lines.put(lineNumber, currentLine);
                 addLine(currentLine.toLowerCase().split(" "), lineNumber);
                 lineNumber++;
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found!");
+            ui.printFileNotFoundExceptionMessage(e);
         }
     }
 
