@@ -1,5 +1,7 @@
 package search;
 
+import search.engine.Engine;
+
 public class Main {
 
     private static final Engine engine = new Engine();

@@ -1,5 +1,8 @@
 package search;
 
+import search.engine.Engine;
+import search.engine.strategies.ChosenStrategy;
+
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -31,7 +34,7 @@ class UI {
 
             if (input == Command.SEARCH) {
                 ChosenStrategy chosenStrategy = readStrategy();
-                String entryToFind = readEntry();
+                String[] entryToFind = readEntry().split(" ");
                 System.out.println();
                 Set<Integer> foundEntries = engine.search(chosenStrategy,
                         entryToFind);

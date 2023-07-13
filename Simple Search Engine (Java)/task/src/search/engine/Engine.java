@@ -1,8 +1,10 @@
-package search;
+package search.engine;
 
-import search.strategies.All;
-import search.strategies.Any;
-import search.strategies.None;
+import search.engine.strategies.All;
+import search.engine.strategies.Any;
+import search.engine.strategies.ChosenStrategy;
+import search.engine.strategies.EntryFinder;
+import search.engine.strategies.None;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * Creates and runs the search engine.
  */
-class Engine {
+public class Engine {
 
     private final Map<String, ArrayList<Integer>> invertedIndex =
             new HashMap<>();
@@ -31,7 +33,7 @@ class Engine {
      * @param fileName the string of the name of the file to read
      * @return true, if the file is found
      */
-    boolean readFile(String fileName) {
+    public boolean readFile(String fileName) {
         try (Scanner fileScanner = new Scanner(new File(fileName))) {
             while (fileScanner.hasNextLine()) {
                 String currentLine = fileScanner.nextLine();
@@ -70,9 +72,12 @@ class Engine {
      * Searches the inverted index with the specified search strategy and entry
      * to find.
      *
+     * @param chosenStrategy the chosen strategy
+     * @param entryToFind    the string array of the entry to find
      * @return the set of line numbers of the found entries
      */
-    Set<Integer> search(ChosenStrategy chosenStrategy, String entryToFind) {
+    public Set<Integer> search(ChosenStrategy chosenStrategy,
+                               String[] entryToFind) {
         EntryFinder entryFinder = new EntryFinder();
 
         switch (chosenStrategy) {
@@ -81,7 +86,8 @@ class Engine {
             case NONE -> entryFinder.setStrategy(new None());
         }
 
-        return entryFinder.getFoundEntries(entryToFind, invertedIndex);
+        return entryFinder.getFoundEntries(entryToFind,
+                Collections.unmodifiableMap(invertedIndex));
     }
 
     public Map<Integer, String> getLines() {

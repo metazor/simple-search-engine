@@ -1,10 +1,8 @@
-package search.strategies;
+package search.engine.strategies;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,19 +14,18 @@ public class All implements Strategy {
     /**
      * Searches for lines which have every word of the search query.
      *
-     * @param entryToFind   the string of the entry to find
+     * @param entryToFind   the string array of the entry to find
      * @param invertedIndex the map of the inverted index
      * @return the set of line numbers of the found entries
      */
     @Override
-    public Set<Integer> getFoundEntries(String entryToFind,
+    public Set<Integer> getFoundEntries(String[] entryToFind,
                                         Map<String, ArrayList<Integer>>
                                                 invertedIndex) {
-        List<String> splitEntryToFind = Arrays.asList(entryToFind.split(" "));
         Set<Integer> foundEntries = new HashSet<>();
 
-        for (int i = 0; i < splitEntryToFind.size(); i++) {
-            String word = splitEntryToFind.get(i);
+        for (int i = 0; i < entryToFind.length; i++) {
+            String word = entryToFind[i];
             verifyWord(invertedIndex, foundEntries, i, word);
         }
 
