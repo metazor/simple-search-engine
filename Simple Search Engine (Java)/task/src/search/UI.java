@@ -1,8 +1,8 @@
 package search;
 
 import search.engine.Engine;
-import search.engine.strategies.ChosenStrategy;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -13,27 +13,31 @@ class UI {
     private static final String VALID_COMMANDS = "[0-2]";
     private static final String UNEXPECTED_VALUE = "Unexpected value: ";
     private final Engine engine;
+    private final String fileName;
 
     /**
      * Class constructor, which initializes the specified field.
      *
-     * @param engine the engine used by this
+     * @param engine   the engine used by this
+     * @param fileName the string of the name of the file with the data
      */
-    UI(Engine engine) {
+    UI(Engine engine, String fileName) {
         this.engine = engine;
+        this.fileName = fileName;
     }
 
     /**
      * Reads the user's command and executes it.
      */
-    void startMenu() {
+    void startMenu() throws FileNotFoundException {
+        engine.readFile(fileName);
         Command input = null;
 
         while (input != Command.EXIT) {
             input = readCommand();
 
             if (input == Command.SEARCH) {
-                ChosenStrategy chosenStrategy = readStrategy();
+                String chosenStrategy = readStrategy();
                 String[] entryToFind = readEntry().split(" ");
                 System.out.println();
                 Set<Integer> foundEntries = engine.search(chosenStrategy,
@@ -109,18 +113,12 @@ class UI {
      *
      * @return the chosen strategy
      */
-    private ChosenStrategy readStrategy() {
+    private String readStrategy() {
         System.out.println("Select a matching strategy: ALL, ANY, NONE");
-        String strategy = scanner.nextLine();
+        String chosenStrategy = scanner.nextLine();
         System.out.println();
 
-        return switch (strategy) {
-            case "ALL" -> ChosenStrategy.ALL;
-            case "ANY" -> ChosenStrategy.ANY;
-            case "NONE" -> ChosenStrategy.NONE;
-            default -> throw new IllegalStateException(UNEXPECTED_VALUE
-                    + strategy);
-        };
+        return chosenStrategy;
     }
 
     /**
